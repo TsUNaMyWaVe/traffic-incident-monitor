@@ -54,4 +54,4 @@ Run the application:
 docker-compose up --build
 ```
 
-The backend will run on `http://localhost:4000` and the frontend will run on `http://localhost:300`.
+The backend will run on `http://localhost:4000` and the frontend will run on `http://localhost:3000`.
