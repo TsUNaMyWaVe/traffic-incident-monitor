@@ -1,0 +1,44 @@
+version: '3.8'
+
+services:
+  mysql:
+    image: mysql:8.0
+    container_name: traffic_incident_monitor_db
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: traffic_incident_monitor
+    volumes:
+      - mysql_data:/var/lib/mysql
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      timeout: 5s
+      retries: 10
+
+  app:
+    build: .
+    container_name: traffic_incident_monitor_app
+    depends_on:
+      mysql:
+        condition: service_healthy
+    environment:
+      DB_HOST: mysql
+      DB_PORT: 3306
+      DB_USER: root
+      DB_PASSWORD: root
+      DB_NAME: traffic_incident_monitor
+      NODE_ENV: production
+    ports:
+      - "4000:4000"
+
+  client:
+    build:
+      context: .
+      dockerfile: Dockerfile.client
+    container_name: traffic_incident_monitor_client
+    depends_on:
+      - app
+    ports:
+      - "3000:80"
+
+volumes:
+  mysql_data:
